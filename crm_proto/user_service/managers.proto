@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+option go_package = "genproto/manager_service";
+
+package manager_service_go;
+import "google/protobuf/empty.proto";
+
+
+service ManagerService {
+    rpc Create(CreateManager) returns (GetManager) {}
+    rpc GetByID(ManagerPrimaryKey) returns (GetManager) {}
+    rpc GetList(GetListManagerRequest) returns (GetListManagerResponse) {}
+    rpc Update(UpdateManager) returns (GetManager) {}
+    rpc Delete(ManagerPrimaryKey) returns (google.protobuf.Empty) {}
+    rpc Login(ManagerLoginRequest) returns (ManagerLoginResponse){}
+    rpc Register(ManagerRegisterRequest) returns (google.protobuf.Empty){}
+    rpc RegisterConfirm(ManagerRegisterConfRequest) returns (ManagerLoginResponse){}
+    rpc ChangePassword(ManagerChangePassword) returns (ManagerChangePasswordResp){}
+}
+
+message ManagerPrimaryKey {
+    string id = 1;
+}
+
+message CreateManager {
+    string branch_id = 1;
+    string birthday = 2;
+    string gender = 3;
+    string fullname = 4;
+    string email = 5;
+    string phone = 6;
+    string user_password = 7;
+    double salary = 8;
+    string start_working = 9;
+    string end_working = 10;
+}
+
+message GetManager {
+    string branch_id = 1;
+    string user_login = 2;
+    string birthday = 3;
+    string gender = 4;
+    string fullname = 5;
+    string email = 6;
+    string phone = 7;
+    double salary = 8;
+    string start_working = 9;
+    string end_working = 10;
+    string created_at = 11;
+    string updated_at = 12;
+    string id = 13;
+}
+
+message UpdateManager {
+    string branch_id = 1;
+    string birthday = 2;
+    string gender = 3;
+    string fullname = 4;
+    string email = 5;
+    string phone = 6;
+    double salary = 7;
+    string start_working = 8;
+    string end_working = 9;
+    string id = 10;
+}
+
+message GetListManagerRequest {
+    int64 offset = 1;
+    int64 limit = 2;
+    string search = 3;
+}
+
+message GetListManagerResponse {
+    int64 Count = 1;
+    repeated GetManager Managers = 2;
+}
+
+
+message ManagerLoginRequest {
+    string user_login = 1;
+    string user_password = 2;
+}
+
+
+message ManagerLoginResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+}
+
+
+message ManagerRegisterRequest {
+    string mail = 1;
+}
+
+message ManagerRegisterConfRequest {
+    string mail = 1;
+    string otp = 2;
+    repeated CreateManager Manager = 3;
+}
+
+message ManagerChangePassword {
+    string UserLogin = 1;
+    string OldPassword = 2;
+    string NewPassword  = 3;
+}
+
+message ManagerChangePasswordResp {
+    string comment = 1;
+}
+
+message GetManagerByLogin {
+    string branch_id = 1;
+    string user_login = 2;
+    string birthday = 3;
+    string gender = 4;
+    string fullname = 5;
+    string email = 6;
+    string phone = 7;
+    double salary = 8;
+    string user_password = 9;
+    string start_working = 10;
+    string end_working = 11;
+    string created_at = 12;
+    string updated_at = 13;
+    string id = 14;
+}

@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+option go_package = "genproto/schedule_service";
+
+package schedule_service_go;
+import "google/protobuf/empty.proto";
+
+
+service ScheduleService {
+    rpc Create(CreateSchedule) returns (GetSchedule) {}
+    rpc GetByID(SchedulePrimaryKey) returns (GetSchedule) {}
+    rpc GetList(GetListScheduleRequest) returns (GetListScheduleResponse) {}
+    rpc Update(UpdateSchedule) returns (GetSchedule) {}
+    rpc Delete(SchedulePrimaryKey) returns (google.protobuf.Empty) {}
+    rpc GetStudentSchedule(SchedulePrimaryKey) returns (GetStudentSchedules) {}
+    rpc GetForWeek(GetWeekScheduleRequest) returns (GetWeekScheduleResponse) {}
+}
+
+message SchedulePrimaryKey {
+    string id = 1;
+}
+
+message CreateSchedule {
+    string group_id = 1;
+    string lesson_id = 2;
+    string classroom = 3;
+    string type_of_group = 4;
+    double task = 5;
+    string deadline = 6;
+    double score = 7;
+    string start_time = 8;
+    string end_time = 9;
+}
+
+message GetSchedule {
+    string group_id = 1;
+    string lesson_id = 2;
+    string classroom = 3;
+    string type_of_group = 4;
+    string task = 5;
+    string deadline = 6;
+    double score = 7;
+    string start_time = 8;
+    string end_time = 9;
+    string created_at = 10;
+    string updated_at = 11;
+    string id = 12;
+}
+
+message UpdateSchedule {
+    string group_id = 1;
+    string lesson_id = 2;
+    string classroom = 3;
+    string type_of_group = 6;
+    double task = 7;
+    string deadline = 8;
+    double score = 9;
+    string start_time = 10;
+    string end_time = 11;
+    string id = 12;
+}
+
+message GetListScheduleRequest {
+    int64 offset = 1;
+    int64 limit = 2;
+    string search = 3;
+}
+
+message GetListScheduleResponse {
+    int64 Count = 1;
+    repeated GetSchedule Schedules = 2;
+}
+
+message GetStudentSchedules {
+    string classroom = 1;
+    string type_of_group = 2;
+    string task = 3;
+    string deadline = 4;
+    double score = 5;
+    string start_time = 6;
+    string end_time = 7;
+    bool attended = 8;
+    double task_score = 9;
+}
+
+message GetScheduleWeek {
+    string group_name = 1;
+    string group_type = 2;
+    string branch_name = 3;
+    string teacher_name = 4;
+    string support_teacher_name = 5;
+    string type_of_group = 6;
+    string classroom = 7;
+    int64 students_count = 8;
+    string start_time = 9;
+    string end_time = 10;
+    string group_id = 11;
+}
+
+message GetWeekScheduleRequest {
+    string from_date= 1;
+    string to_date = 2;
+    string search = 3;
+}
+
+message GetWeekScheduleResponse {
+    int64 Count = 1;
+    repeated GetScheduleWeek Schedules = 2;
+}

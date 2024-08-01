@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+option go_package = "genproto/journal_service";
+
+package journal_service_go;
+import "google/protobuf/empty.proto";
+
+
+service JournalService {
+    rpc Create(CreateJournal) returns (GetJournal) {}
+    rpc GetByID(JournalPrimaryKey) returns (GetJournal) {}
+    rpc GetList(GetListJournalRequest) returns (GetListJournalResponse) {}
+    rpc Update(UpdateJournal) returns (GetJournal) {}
+    rpc Delete(JournalPrimaryKey) returns (google.protobuf.Empty) {}
+}
+
+message JournalPrimaryKey {
+    string id = 1;
+}
+
+message CreateJournal {
+    string schedule_id = 1;
+    string date_of_lesson = 2;
+}
+
+message GetJournal {
+    string schedule_id = 1;
+    string date_of_lesson = 2;
+    string created_at = 3;
+    string updated_at = 4;
+    string id = 5;
+}
+
+message UpdateJournal {
+    string schedule_id = 1;
+    string date_of_lesson = 2;
+    string id = 3;
+}
+
+message GetListJournalRequest {
+    int64 offset = 1;
+    int64 limit = 2;
+    string search = 3;
+}
+
+message GetListJournalResponse {
+    int64 Count = 1;
+    repeated GetJournal Journals = 2;
+}

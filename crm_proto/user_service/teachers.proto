@@ -1,0 +1,139 @@
+syntax = "proto3";
+
+option go_package = "genproto/teacher_service";
+
+package teacher_service_go;
+import "google/protobuf/empty.proto";
+
+
+service TeacherService {
+    rpc Create(CreateTeacher) returns (GetTeacher) {}
+    rpc GetByID(TeacherPrimaryKey) returns (GetTeacher) {}
+    rpc GetList(GetListTeacherRequest) returns (GetListTeacherResponse) {}
+    rpc Update(UpdateTeacher) returns (GetTeacher) {}
+    rpc Delete(TeacherPrimaryKey) returns (google.protobuf.Empty) {}
+    rpc Login(TeacherLoginRequest) returns (TeacherLoginResponse){}
+    rpc Register(TeacherRegisterRequest) returns (google.protobuf.Empty){}
+    rpc RegisterConfirm(TeacherRegisterConfRequest) returns (TeacherLoginResponse){}
+    rpc ChangePassword(TeacherChangePassword) returns (TeacherChangePasswordResp){}
+}
+
+message TeacherPrimaryKey {
+    string id = 1;
+}
+
+message CreateTeacher {
+    string branch_id = 1;
+    string birthday = 2;
+    string gender = 3;
+    string fullname = 4;
+    string email = 5;
+    string phone = 6;
+    string user_password = 7;
+    double salary = 8;
+    double ielts_score = 9;
+    int32 ielts_attempts_count = 10;
+    string start_working = 11;
+    string end_working = 12;
+}
+
+message GetTeacher {
+    string branch_id = 1;
+    string user_login = 2;
+    string birthday = 3;
+    string gender = 4;
+    string fullname = 5;
+    string email = 6;
+    string phone = 7;
+    double salary = 8;
+    double ielts_score = 9;
+    int32 ielts_attempts_count = 10;
+    string start_working = 11;
+    string end_working = 12;
+    string created_at = 13;
+    string updated_at = 14;
+    string id = 15;
+}
+
+message UpdateTeacher {
+    string branch_id = 1;
+    string birthday = 2;
+    string gender = 3;
+    string fullname = 4;
+    string email = 5;
+    string phone = 6;
+    double salary = 7;
+    double ielts_score = 8;
+    int32 ielts_attempts_count = 9;
+    string start_working = 10;
+    string end_working = 12;
+    string id = 13;
+}
+
+message GetListTeacherRequest {
+    int64 offset = 1;
+    int64 limit = 2;
+    string search = 3;
+}
+
+message GetListTeacherResponse {
+    int64 Count = 1;
+    repeated GetTeacher Teachers = 2;
+}
+
+message TeacherLoginRequest {
+    string user_login = 1;
+    string user_password = 2;
+}
+
+
+message TeacherLoginResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+}
+
+
+message TeacherRegisterRequest {
+    string mail = 1;
+}
+
+message TeacherRegisterConfRequest {
+    string mail = 1;
+    string otp = 2;
+    repeated CreateTeacher Teacher = 3;
+}
+
+message TeacherChangePassword {
+    string UserLogin = 1;
+    string OldPassword = 2;
+    string NewPassword  = 3;
+}
+
+message TeacherChangePasswordResp {
+    string comment = 1;
+}
+
+message GetTeacherByLogin {
+    string branch_id = 1;
+    string user_login = 2;
+    string birthday = 3;
+    string gender = 4;
+    string fullname = 5;
+    string email = 6;
+    string phone = 7;
+    double salary = 8;
+    double ielts_score = 9;
+    int32 ielts_attempts_count = 10;
+    string user_password = 11;
+    string start_working = 12;
+    string end_working = 13;
+    string created_at = 14;
+    string updated_at = 15;
+    string id = 16;
+}
+
+
+
+
+
+

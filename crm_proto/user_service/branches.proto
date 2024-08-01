@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+option go_package = "genproto/branch_service";
+
+package branch_service_go;
+import "google/protobuf/empty.proto";
+
+
+service BranchService {
+    rpc Create(CreateBranch) returns (GetBranch) {}
+    rpc GetByID(BranchPrimaryKey) returns (GetBranch) {}
+    rpc GetList(GetListBranchRequest) returns (GetListBranchResponse) {}
+    rpc Update(UpdateBranch) returns (GetBranch) {}
+    rpc Delete(BranchPrimaryKey) returns (google.protobuf.Empty) {}
+}
+
+message BranchPrimaryKey {
+    string id = 1;
+}
+
+message CreateBranch {
+    string branch_name = 1;
+    string branch_location = 2;
+    string phone = 3;
+    string open_time = 4;
+    string close_time = 5;
+}
+
+message GetBranch {
+    string branch_name = 1;
+    string branch_location = 2;
+    string phone = 3;
+    string open_time = 4;
+    string close_time = 5;
+    string created_at = 6;
+    string updated_at = 7;
+    string id = 8;
+}
+
+message UpdateBranch {
+    string branch_name = 1;
+    string branch_location = 2;
+    string phone = 3;
+    string open_time = 4;
+    string close_time = 5;
+    string id = 6;
+}
+
+message GetListBranchRequest {
+    int64 offset = 1;
+    int64 limit = 2;
+    string search = 3;
+}
+
+message GetListBranchResponse {
+    int64 Count = 1;
+    repeated GetBranch Branchs = 2;
+}

@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+option go_package = "genproto/group_service";
+
+package group_service_go;
+import "google/protobuf/empty.proto";
+
+
+service GroupService {
+    rpc Create(CreateGroup) returns (GetGroup) {}
+    rpc GetByID(GroupPrimaryKey) returns (GetGroup) {}
+    rpc GetList(GetListGroupRequest) returns (GetListGroupResponse) {}
+    rpc Update(UpdateGroup) returns (GetGroup) {}
+    rpc Delete(GroupPrimaryKey) returns (google.protobuf.Empty) {}
+    rpc Check(GroupPrimaryKey) returns (CheckGroupResp){}
+    rpc GetTBS(GroupPrimaryKey) returns (GetTBSresp){}
+}
+
+message GroupPrimaryKey {
+    string id = 1;
+}
+
+message CreateGroup {
+    string branch_id = 1;
+    string teacher_id = 2;
+    string support_teacher_id = 3;
+    string group_name = 4;
+    string group_level = 5;
+    string started_at = 6;
+    string finished_at = 7;
+}
+
+message GetGroup {
+    string branch_id = 1;
+    string teacher_id = 2;
+    string support_teacher_id = 3;
+    string group_name = 4;
+    string group_level = 5;
+    string started_at = 6;
+    string finished_at = 7;
+    string created_at = 8;
+    string updated_at = 9;
+    string id = 10;
+}
+
+message UpdateGroup {
+    string branch_id = 1;
+    string teacher_id = 2;
+    string support_teacher_id = 3;
+    string group_name = 4;
+    string group_level = 5;
+    string started_at = 6;
+    string finished_at = 7;
+    string id = 8;
+}
+
+message GetListGroupRequest {
+    int64 offset = 1;
+    int64 limit = 2;
+    string search = 3;
+}
+
+message GetListGroupResponse {
+    int64 Count = 1;
+    repeated GetGroup Groups = 2;
+}
+
+message CheckGroupResp {
+    bool check = 1;
+}
+
+message GetTBSresp {
+    string branch_id = 1;
+    string branch_name = 2;
+    string teacher_id = 3;
+    string teacher_name = 4;
+    string support_teacher_id = 5;
+    string support_teacher_name = 6;
+    string group_name = 7;
+    int64 student_count = 8;
+}

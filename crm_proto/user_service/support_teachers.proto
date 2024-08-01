@@ -1,0 +1,134 @@
+syntax = "proto3";
+
+option go_package = "genproto/support_teacher_service";
+
+package support_teacher_service_go;
+import "google/protobuf/empty.proto";
+
+
+service SupportTeacherService {
+    rpc Create(CreateSupportTeacher) returns (GetSupportTeacher) {}
+    rpc GetByID(SupportTeacherPrimaryKey) returns (GetSupportTeacher) {}
+    rpc GetList(GetListSupportTeacherRequest) returns (GetListSupportTeacherResponse) {}
+    rpc Update(UpdateSupportTeacher) returns (GetSupportTeacher) {}
+    rpc Delete(SupportTeacherPrimaryKey) returns (google.protobuf.Empty) {}
+    rpc Login(SupportTeacherLoginRequest) returns (SupportTeacherLoginResponse) {}
+    rpc Register(SupportTeacherRegisterRequest) returns (google.protobuf.Empty) {}
+    rpc RegisterConfirm(SupportTeacherRegisterConfRequest) returns (SupportTeacherLoginResponse) {}
+    rpc ChangePassword(SupportTeacherChangePassword) returns (SupportTeacherChangePasswordResp) {}
+}
+
+message SupportTeacherPrimaryKey {
+    string id = 1;
+}
+
+message CreateSupportTeacher {
+    string branch_id = 1;
+    string birthday = 2;
+    string gender = 3;
+    string fullname = 4;
+    string email = 5;
+    string phone = 6;
+    string user_password = 7;
+    double salary = 8;
+    double ielts_score = 9;
+    int32 ielts_attempts_count = 10;
+    string start_working = 11;
+    string end_working = 12;
+}
+
+message GetSupportTeacher {
+    string branch_id = 1;
+    string user_login = 2;
+    string birthday = 3;
+    string gender = 4;
+    string fullname = 5;
+    string email = 6;
+    string phone = 7;
+    double salary = 8;
+    double ielts_score = 9;
+    int32 ielts_attempts_count = 10;
+    string start_working = 11;
+    string end_working = 12;
+    string created_at = 13;
+    string updated_at = 14;
+    string id = 15;
+}
+
+message UpdateSupportTeacher {
+    string branch_id = 1;
+    string birthday = 2;
+    string gender = 3;
+    string fullname = 4;
+    string email = 5;
+    string phone = 6;
+    double salary = 7;
+    double ielts_score = 8;
+    int32 ielts_attempts_count = 9;
+    string start_working = 10;
+    string end_working = 11;
+    string id = 12;
+}
+
+message GetListSupportTeacherRequest {
+    int64 offset = 1;
+    int64 limit = 2;
+    string search = 3;
+}
+
+message GetListSupportTeacherResponse {
+    int64 Count = 1;
+    repeated GetSupportTeacher SupportTeachers = 2;
+}
+
+
+message SupportTeacherLoginRequest {
+    string user_login = 1;
+    string user_password = 2;
+}
+
+
+message SupportTeacherLoginResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+}
+
+
+message SupportTeacherRegisterRequest {
+    string mail = 1;
+}
+
+message SupportTeacherRegisterConfRequest {
+    string mail = 1;
+    string otp = 2;
+    repeated CreateSupportTeacher SupportTeacher = 3;
+}
+
+message SupportTeacherChangePassword {
+    string UserLogin = 1;
+    string OldPassword = 2;
+    string NewPassword  = 3;
+}
+
+message GetSupportTeacherByLogin {
+    string branch_id = 1;
+    string user_login = 2;
+    string birthday = 3;
+    string gender = 4;
+    string fullname = 5;
+    string email = 6;
+    string phone = 7;
+    double salary = 8;
+    double ielts_score = 9;
+    int32 ielts_attempts_count = 10;
+    string user_password = 11;
+    string start_working = 12;
+    string end_working = 13;
+    string created_at = 14;
+    string updated_at = 15;
+    string id = 16;
+}
+
+message SupportTeacherChangePasswordResp {
+    string comment = 1;
+}

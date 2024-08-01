@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+option go_package = "genproto/student_service";
+
+package student_service_go;
+import "google/protobuf/empty.proto";
+
+
+service StudentService {
+    rpc Create(CreateStudent) returns (GetStudent) {}
+    rpc GetByID(StudentPrimaryKey) returns (GetStudent) {}
+    rpc GetList(GetListStudentRequest) returns (GetListStudentResponse) {}
+    rpc Update(UpdateStudent) returns (GetStudent) {}
+    rpc Delete(StudentPrimaryKey) returns (google.protobuf.Empty) {}
+    rpc Check(StudentPrimaryKey) returns (CheckStudentResp){}
+    rpc Login(StudentLoginRequest) returns (StudentLoginResponse){}
+    rpc Register(StudentRegisterRequest) returns (google.protobuf.Empty){}
+    rpc RegisterConfirm(StudentRegisterConfRequest) returns (StudentLoginResponse){}
+    rpc ChangePassword(StudentChangePassword) returns (StudentChangePasswordResp){}
+
+}
+
+message StudentPrimaryKey {
+    string id = 1;
+}
+
+message CreateStudent {
+    string group_id = 1;
+    string birthday = 2;
+    string gender = 3;
+    string fullname = 4;
+    string email = 5;
+    string phone = 6;
+    string user_password = 7;
+    double paid_sum = 8;
+    string started_at = 9;
+    string finished_at = 10;
+}
+
+message GetStudent {
+    string group_id = 1;
+    string user_login = 2;
+    string birthday = 3;
+    string gender = 4;
+    string fullname = 5;
+    string email = 6;
+    string phone = 7;
+    double paid_sum = 8;
+    string started_at = 9;
+    string finished_at = 10;
+    string created_at = 11;
+    string updated_at = 12;
+    string id = 13;
+}
+
+message UpdateStudent {
+    string group_id = 1;
+    string birthday = 2;
+    string gender = 3;
+    string fullname = 4;
+    string email = 5;
+    string phone = 6;
+    double paid_sum = 7;
+    string started_at = 8;
+    string finished_at = 9;
+    string id = 10;
+}
+
+message GetListStudentRequest {
+    int64 offset = 1;
+    int64 limit = 2;
+    string search = 3;
+}
+
+message GetListStudentResponse {
+    int64 Count = 1;
+    repeated GetStudent Students = 2;
+}
+
+
+message StudentLoginRequest {
+    string user_login = 1;
+    string user_password = 2;
+}
+
+
+message StudentLoginResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+}
+
+
+message StudentRegisterRequest {
+    string mail = 1;
+}
+
+message StudentRegisterConfRequest {
+    string mail = 1;
+    string otp = 2;
+    repeated CreateStudent Student = 3;
+}
+
+
+message StudentChangePassword {
+    string UserLogin = 1;
+    string OldPassword = 2;
+    string NewPassword  = 3;
+}
+
+message StudentChangePasswordResp {
+    string comment = 1;
+}
+
+message GetStudentByLogin {
+    string group_id = 1;
+    string user_login = 2;
+    string birthday = 3;
+    string gender = 4;
+    string fullname = 5;
+    string email = 6;
+    string phone = 7;
+    string user_password = 8;
+    double paid_sum = 9;
+    string started_at = 10;
+    string finished_at = 11;
+    string created_at = 12;
+    string updated_at = 13;
+    string id = 14;
+}
+
+message CheckStudentResp {
+    bool check = 1;
+}

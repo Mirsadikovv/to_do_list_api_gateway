@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+option go_package = "genproto/superadmin_service";
+
+package superadmin_service_go;
+import "google/protobuf/empty.proto";
+
+
+service SuperadminService {
+    rpc Create(CreateSuperadmin) returns (GetSuperadmin) {}
+    rpc GetByID(SuperadminPrimaryKey) returns (GetSuperadmin) {}
+    rpc Update(UpdateSuperadmin) returns (GetSuperadmin) {}
+    rpc Delete(SuperadminPrimaryKey) returns (google.protobuf.Empty) {}
+    rpc Login(SuperadminLoginRequest) returns (SuperadminLoginResponse){}
+    rpc Register(SuperadminRegisterRequest) returns (google.protobuf.Empty){}
+    rpc RegisterConfirm(SuperadminRegisterConfRequest) returns (SuperadminLoginResponse){}
+    rpc ChangePassword(SuperadminChangePassword) returns (SuperadminChangePasswordResp){}
+}
+
+message SuperadminPrimaryKey {
+    string id = 1;
+}
+
+message CreateSuperadmin {
+    string birthday = 1;
+    string gender = 2;
+    string fullname = 3;
+    string email = 4;
+    string phone = 5;
+    string user_password = 6;
+}
+
+message GetSuperadmin {
+    string user_login = 1;
+    string birthday = 2;
+    string gender = 3;
+    string fullname = 4;
+    string email = 5;
+    string phone = 6;
+    string created_at = 7;
+    string updated_at = 8;
+    string id = 9;
+}
+
+message UpdateSuperadmin {
+    string birthday = 1;
+    string gender = 2;
+    string fullname = 3;
+    string email = 4;
+    string phone = 5;
+    string id = 6;
+}
+
+
+message SuperadminLoginRequest {
+    string user_login = 1;
+    string user_password = 2;
+}
+
+
+message SuperadminLoginResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+}
+
+
+message SuperadminRegisterRequest {
+    string mail = 1;
+}
+
+message SuperadminRegisterConfRequest {
+    string mail = 1;
+    string otp = 2;
+    repeated CreateSuperadmin Superadmin = 3;
+}
+
+
+message SuperadminChangePassword {
+    string UserLogin = 1;
+    string OldPassword = 2;
+    string NewPassword  = 3;
+}
+
+message SuperadminChangePasswordResp {
+    string comment = 1;
+}
+
+message GetSuperadminByLogin {
+    string branch_id = 1;
+    string user_login = 2;
+    string birthday = 3;
+    string gender = 4;
+    string fullname = 5;
+    string email = 6;
+    string phone = 7;
+    string user_password = 8;
+    string created_at = 9;
+    string updated_at = 10;
+    string id = 11;
+}
+

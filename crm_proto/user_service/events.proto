@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+option go_package = "genproto/event_service";
+
+package event_service_go;
+import "google/protobuf/empty.proto";
+
+
+service EventService {
+    rpc Create(CreateEvent) returns (GetEvent) {}
+    rpc GetByID(EventPrimaryKey) returns (GetEvent) {}
+    rpc GetList(GetListEventRequest) returns (GetListEventResponse) {}
+    rpc Update(UpdateEvent) returns (GetEvent) {}
+    rpc Delete(EventPrimaryKey) returns (google.protobuf.Empty) {}
+}
+
+message EventPrimaryKey {
+    string id = 1;
+}
+
+message CreateEvent {
+    string branch_id = 1;
+    string topic = 2;
+    string start_time = 3;
+    string end_time = 4;
+}
+
+message GetEvent {
+    string branch_id = 1;
+    string topic = 2;
+    string start_time = 3;
+    string end_time = 4;
+    string created_at = 5;
+    string updated_at = 6;
+    string id = 7;
+}
+
+message UpdateEvent {
+    string branch_id = 1;
+    string topic = 2;
+    string start_time = 3;
+    string end_time = 4;
+    string id = 5;
+}
+
+message GetListEventRequest {
+    int64 offset = 1;
+    int64 limit = 2;
+    string search = 3;
+}
+
+message GetListEventResponse {
+    int64 Count = 1;
+    repeated GetEvent Events = 2;
+}
+

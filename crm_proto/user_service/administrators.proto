@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+option go_package = "genproto/administrator_service";
+
+package administrator_service_go;
+import "google/protobuf/empty.proto";
+
+
+service AdministratorService {
+    rpc Create(CreateAdministrator) returns (GetAdministrator){}
+    rpc GetByID(AdministratorPrimaryKey) returns (GetAdministrator){}
+    rpc GetList(GetListAdministratorRequest) returns (GetListAdministratorResponse){}
+    rpc Update(UpdateAdministrator) returns (GetAdministrator){}
+    rpc Delete(AdministratorPrimaryKey) returns (google.protobuf.Empty){}
+    rpc Login(AdministratorLoginRequest) returns (AdministratorLoginResponse){}
+    rpc Register(AdministratorRegisterRequest) returns (google.protobuf.Empty){}
+    rpc RegisterConfirm(AdministratorRegisterConfRequest) returns (AdministratorLoginResponse){}
+    rpc ChangePassword(AdministratorChangePassword) returns (AdministratorChangePasswordResp){}
+}
+
+message AdministratorPrimaryKey {
+    string id = 1;
+}
+
+message CreateAdministrator {
+    string branch_id = 1;
+    string birthday = 2;
+    string gender = 3;
+    string fullname = 4;
+    string email = 5;
+    string phone = 6;
+    string user_password = 7;
+    double salary = 8;
+    string start_working = 9;
+    string end_working = 10;
+}
+
+message GetAdministrator {
+    string branch_id = 1;
+    string user_login = 2;
+    string birthday = 3;
+    string gender = 4;
+    string fullname = 5;
+    string email = 6;
+    string phone = 7;
+    double salary = 8;
+    string start_working = 9;
+    string end_working = 10;
+    string created_at = 11;
+    string updated_at = 12;
+    string id = 13;
+}
+
+message UpdateAdministrator {
+    string branch_id = 1;
+    string birthday = 2;
+    string gender = 3;
+    string fullname = 4;
+    string email = 5;
+    string phone = 6;
+    double salary = 7;
+    string start_working = 8;
+    string end_working = 9;
+    string id = 10;
+}
+
+message GetListAdministratorRequest {
+    int64 offset = 1;
+    int64 limit = 2;
+    string search = 3;
+}
+
+message GetListAdministratorResponse {
+    int64 Count = 1;
+    repeated GetAdministrator Administrators = 2;
+}
+
+
+message AdministratorLoginRequest {
+    string user_login = 1;
+    string user_password = 2;
+}
+
+
+message AdministratorLoginResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+}
+
+
+message AdministratorRegisterRequest {
+    string mail = 1;
+}
+
+message AdministratorRegisterConfRequest {
+    string mail = 1;
+    string otp = 2;
+    repeated CreateAdministrator Administrator = 3;
+}
+
+
+message AdministratorChangePassword {
+    string UserLogin = 1;
+    string OldPassword = 2;
+    string NewPassword  = 3;
+}
+
+message AdministratorChangePasswordResp {
+    string comment = 1;
+}
+
+message GetAdministratorByLogin {
+    string branch_id = 1;
+    string user_login = 2;
+    string birthday = 3;
+    string gender = 4;
+    string fullname = 5;
+    string email = 6;
+    string phone = 7;
+    double salary = 8;
+    string user_password = 9;
+    string start_working = 10;
+    string end_working = 11;
+    string created_at = 12;
+    string updated_at = 13;
+    string id = 14;
+}

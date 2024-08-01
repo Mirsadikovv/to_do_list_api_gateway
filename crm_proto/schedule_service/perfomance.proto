@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+option go_package = "genproto/perfomance_service";
+
+package perfomance_service_go;
+import "google/protobuf/empty.proto";
+
+
+service PerfomanceService {
+    rpc Create(CreatePerfomance) returns (GetPerfomance) {}
+    rpc GetByID(PerfomancePrimaryKey) returns (GetPerfomance) {}
+    rpc GetList(GetListPerfomanceRequest) returns (GetListPerfomanceResponse) {}
+    rpc Update(UpdatePerfomance) returns (GetPerfomance) {}
+    rpc Delete(PerfomancePrimaryKey) returns (google.protobuf.Empty) {}
+}
+
+message PerfomancePrimaryKey {
+    string id = 1;
+}
+
+message CreatePerfomance {
+    string student_id = 1;
+    string schedule_id = 2;
+    bool attended = 3;
+    double task_score = 4;
+}
+
+message GetPerfomance {
+    string student_id = 1;
+    string schedule_id = 2;
+    bool attended = 3;
+    double task_score = 4;
+    string created_at = 5;
+    string updated_at = 6;
+    string id = 7;
+}
+
+message UpdatePerfomance {
+    string student_id = 1;
+    string schedule_id = 2;
+    bool attended = 3;
+    double task_score = 4;
+    string id = 5;
+}
+
+message GetListPerfomanceRequest {
+    int64 offset = 1;
+    int64 limit = 2;
+    string search = 3;
+}
+
+message GetListPerfomanceResponse {
+    int64 Count = 1;
+    repeated GetPerfomance Perfomances = 2;
+}
