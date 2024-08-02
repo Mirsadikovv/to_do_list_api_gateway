@@ -103,7 +103,6 @@ func (h *handler) CreateAdmin(c *gin.Context) {
 			handleGrpcErrWithDescription(c, h.log, errors.New("wrong password"), "error while validating password")
 			return
 		}
-
 		resp, err := h.grpcClient.AdminService().Create(c.Request.Context(), admin)
 		if err != nil {
 			handleGrpcErrWithDescription(c, h.log, err, "error while creating admin")

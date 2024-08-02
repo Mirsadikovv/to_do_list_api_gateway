@@ -12,7 +12,7 @@ import (
 )
 
 type GrpcClientI interface {
-	Student() user_service.StudentServiceClient
+	User() user_service.UserServiceClient
 	Admin() admin_service.AdminServiceClient
 }
 
@@ -34,14 +34,14 @@ func New(cfg config.Config) (*GrpcClient, error) {
 	return &GrpcClient{
 		cfg: cfg,
 		connections: map[string]interface{}{
-			"user_service":  user_service.NewStudentServiceClient(connUser),
+			"user_service":  user_service.NewUserServiceClient(connUser),
 			"admin_service": admin_service.NewAdminServiceClient(connUser),
 		},
 	}, nil
 }
 
-func (g *GrpcClient) StudentService() user_service.StudentServiceClient {
-	return g.connections["user_service"].(user_service.StudentServiceClient)
+func (g *GrpcClient) UserService() user_service.UserServiceClient {
+	return g.connections["user_service"].(user_service.UserServiceClient)
 }
 
 func (g *GrpcClient) AdminService() admin_service.AdminServiceClient {

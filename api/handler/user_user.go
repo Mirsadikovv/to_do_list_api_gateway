@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"api_gateway/genproto/student_service"
+	"api_gateway/genproto/user_service"
 	"api_gateway/pkg/validator"
 	"errors"
 	"fmt"
@@ -11,10 +11,10 @@ import (
 )
 
 // @Security ApiKeyAuth
-// @Router /v1/student/getall [GET]
-// @Summary Get all studentes
-// @Description API for getting all studentes
-// @Tags student
+// @Router /v1/user/getall [GET]
+// @Summary Get all useres
+// @Description API for getting all useres
+// @Tags user
 // @Accept  json
 // @Produce  json
 // @Param		search query string false "search"
@@ -24,15 +24,15 @@ import (
 // @Failure		400  {object}  models.ResponseError
 // @Failure		404  {object}  models.ResponseError
 // @Failure		500  {object}  models.ResponseError
-func (h *handler) GetAllStudent(c *gin.Context) {
+func (h *handler) GetAllUser(c *gin.Context) {
 	authInfo, err := getAuthInfo(c)
 	if err != nil {
 		handleGrpcErrWithDescription(c, h.log, err, "Unauthorized")
 
 	}
-	if authInfo.UserRole == "superadmin" || authInfo.UserRole == "administrator" || authInfo.UserRole == "manager" {
+	if authInfo.UserRole == "admin" {
 
-		student := &student_service.GetListStudentRequest{}
+		user := &user_service.GetListUserRequest{}
 
 		search := c.Query("search")
 
@@ -47,135 +47,135 @@ func (h *handler) GetAllStudent(c *gin.Context) {
 			return
 		}
 
-		student.Search = search
-		student.Offset = int64(page)
-		student.Limit = int64(limit)
+		user.Search = search
+		user.Offset = int64(page)
+		user.Limit = int64(limit)
 
-		resp, err := h.grpcClient.StudentService().GetList(c.Request.Context(), student)
+		resp, err := h.grpcClient.UserService().GetList(c.Request.Context(), user)
 		if err != nil {
-			handleGrpcErrWithDescription(c, h.log, err, "error while creating student")
+			handleGrpcErrWithDescription(c, h.log, err, "error while creating user")
 			return
 		}
 		c.JSON(http.StatusOK, resp)
 	} else {
-		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers and administrators can change student")
+		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers and admins can change user")
 	}
 }
 
 // @Security ApiKeyAuth
-// @Router /v1/student/create [POST]
-// @Summary Create student
-// @Description API for creating studentes
-// @Tags student
+// @Router /v1/user/create [POST]
+// @Summary Create user
+// @Description API for creating useres
+// @Tags user
 // @Accept  json
 // @Produce  json
-// @Param		student body  student_service.CreateStudent true "student"
+// @Param		user body  user_service.CreateUser true "user"
 // @Success		200  {object}  models.ResponseError
 // @Failure		400  {object}  models.ResponseError
 // @Failure		404  {object}  models.ResponseError
 // @Failure		500  {object}  models.ResponseError
-func (h *handler) CreateStudent(c *gin.Context) {
+func (h *handler) CreateUser(c *gin.Context) {
 	authInfo, err := getAuthInfo(c)
 	if err != nil {
 		handleGrpcErrWithDescription(c, h.log, err, "Unauthorized")
 
 	}
-	if authInfo.UserRole == "superadmin" || authInfo.UserRole == "administrator" || authInfo.UserRole == "manager" {
+	if authInfo.UserRole == "admin" {
 
-		student := &student_service.CreateStudent{}
-		if err := c.ShouldBindJSON(&student); err != nil {
+		user := &user_service.CreateUser{}
+		if err := c.ShouldBindJSON(&user); err != nil {
 			handleGrpcErrWithDescription(c, h.log, err, "error while reading body")
 			return
 		}
-		if !validator.ValidateGmail(student.Email) {
+		if !validator.ValidateGmail(user.Email) {
 			handleGrpcErrWithDescription(c, h.log, errors.New("wrong gmail"), "error while validating gmail")
 			return
 		}
 
-		if !validator.ValidatePhone(student.Phone) {
+		if !validator.ValidatePhone(user.Phone) {
 			handleGrpcErrWithDescription(c, h.log, errors.New("wrong phone"), "error while validating phone")
 			return
 		}
 
-		err := validator.ValidateBitrthday(student.Birthday)
+		err := validator.ValidateBitrthday(user.Birthday)
 		if err != nil {
 			handleGrpcErrWithDescription(c, h.log, errors.New("wrong gmail"), "error while validating gmail")
 			return
 		}
 
-		err = validator.ValidatePassword(student.UserPassword)
+		err = validator.ValidatePassword(user.UserPassword)
 		if err != nil {
 			handleGrpcErrWithDescription(c, h.log, errors.New("wrong password"), "error while validating password")
 			return
 		}
 
-		resp, err := h.grpcClient.StudentService().Create(c.Request.Context(), student)
+		resp, err := h.grpcClient.UserService().Create(c.Request.Context(), user)
 		if err != nil {
-			handleGrpcErrWithDescription(c, h.log, err, "error while creating student")
+			handleGrpcErrWithDescription(c, h.log, err, "error while creating user")
 			return
 		}
 		c.JSON(http.StatusOK, resp)
 	} else {
-		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers and administrators can change student")
+		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers and admins can change user")
 	}
 }
 
 // @Security ApiKeyAuth
-// @Router /v1/student/update [PUT]
-// @Summary Update student
-// @Description API for Updating studentes
-// @Tags student
+// @Router /v1/user/update [PUT]
+// @Summary Update user
+// @Description API for Updating useres
+// @Tags user
 // @Accept  json
 // @Produce  json
-// @Param		student body  student_service.UpdateStudent true "student"
+// @Param		user body  user_service.UpdateUser true "user"
 // @Success		200  {object}  models.ResponseError
 // @Failure		400  {object}  models.ResponseError
 // @Failure		404  {object}  models.ResponseError
 // @Failure		500  {object}  models.ResponseError
-func (h *handler) UpdateStudent(c *gin.Context) {
+func (h *handler) UpdateUser(c *gin.Context) {
 	authInfo, err := getAuthInfo(c)
 	if err != nil {
 		handleGrpcErrWithDescription(c, h.log, err, "Unauthorized")
 
 	}
-	if authInfo.UserRole == "superadmin" || authInfo.UserRole == "administrator" || authInfo.UserRole == "manager" || authInfo.UserRole == "student" {
+	if authInfo.UserRole == "admin" || authInfo.UserRole == "user" {
 
-		student := &student_service.UpdateStudent{}
-		if err := c.ShouldBindJSON(&student); err != nil {
+		user := &user_service.UpdateUser{}
+		if err := c.ShouldBindJSON(&user); err != nil {
 			handleGrpcErrWithDescription(c, h.log, err, "error while reading body")
 			return
 		}
-		if !validator.ValidateGmail(student.Email) {
+		if !validator.ValidateGmail(user.Email) {
 			handleGrpcErrWithDescription(c, h.log, errors.New("wrong gmail"), "error while validating gmail")
 			return
 		}
 
-		if !validator.ValidatePhone(student.Phone) {
+		if !validator.ValidatePhone(user.Phone) {
 			handleGrpcErrWithDescription(c, h.log, errors.New("wrong phone"), "error while validating phone")
 			return
 		}
 
-		err := validator.ValidateBitrthday(student.Birthday)
+		err := validator.ValidateBitrthday(user.Birthday)
 		if err != nil {
 			handleGrpcErrWithDescription(c, h.log, errors.New("wrong gmail"), "error while validating gmail")
 			return
 		}
-		resp, err := h.grpcClient.StudentService().Update(c.Request.Context(), student)
+		resp, err := h.grpcClient.UserService().Update(c.Request.Context(), user)
 		if err != nil {
-			handleGrpcErrWithDescription(c, h.log, err, "error while updating student")
+			handleGrpcErrWithDescription(c, h.log, err, "error while updating user")
 			return
 		}
 		c.JSON(http.StatusOK, resp)
 	} else {
-		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers, student and administrators can change student")
+		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers, user and admins can change user")
 	}
 }
 
 // @Security ApiKeyAuth
-// @Router /v1/student/get/{id} [GET]
-// @Summary Get student
-// @Description API for getting student
-// @Tags student
+// @Router /v1/user/get/{id} [GET]
+// @Summary Get user
+// @Description API for getting user
+// @Tags user
 // @Accept  json
 // @Produce  json
 // @Param 		id path string true "id"
@@ -183,33 +183,33 @@ func (h *handler) UpdateStudent(c *gin.Context) {
 // @Failure		400  {object}  models.ResponseError
 // @Failure		404  {object}  models.ResponseError
 // @Failure		500  {object}  models.ResponseError
-func (h *handler) GetStudentById(c *gin.Context) {
+func (h *handler) GetUserById(c *gin.Context) {
 	authInfo, err := getAuthInfo(c)
 	if err != nil {
 		handleGrpcErrWithDescription(c, h.log, err, "Unauthorized")
 
 	}
-	if authInfo.UserRole == "superadmin" || authInfo.UserRole == "administrator" || authInfo.UserRole == "manager" || authInfo.UserRole == "student" {
+	if authInfo.UserRole == "admin" || authInfo.UserRole == "user" {
 
 		id := c.Param("id")
-		student := &student_service.StudentPrimaryKey{Id: id}
+		user := &user_service.UserPrimaryKey{Id: id}
 
-		resp, err := h.grpcClient.StudentService().GetByID(c.Request.Context(), student)
+		resp, err := h.grpcClient.UserService().GetByID(c.Request.Context(), user)
 		if err != nil {
-			handleGrpcErrWithDescription(c, h.log, err, "error while getting student")
+			handleGrpcErrWithDescription(c, h.log, err, "error while getting user")
 			return
 		}
 		c.JSON(http.StatusOK, resp)
 	} else {
-		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers, student and administrators can change student")
+		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers, user and admins can change user")
 	}
 }
 
 // @Security ApiKeyAuth
-// @Router /v1/student/delete/{id} [DELETE]
-// @Summary Delete student
-// @Description API for deleting student
-// @Tags student
+// @Router /v1/user/delete/{id} [DELETE]
+// @Summary Delete user
+// @Description API for deleting user
+// @Tags user
 // @Accept  json
 // @Produce  json
 // @Param 		id path string true "id"
@@ -217,32 +217,32 @@ func (h *handler) GetStudentById(c *gin.Context) {
 // @Failure		400  {object}  models.ResponseError
 // @Failure		404  {object}  models.ResponseError
 // @Failure		500  {object}  models.ResponseError
-func (h *handler) DeleteStudent(c *gin.Context) {
+func (h *handler) DeleteUser(c *gin.Context) {
 	id := c.Param("id")
-	student := &student_service.StudentPrimaryKey{Id: id}
+	user := &user_service.UserPrimaryKey{Id: id}
 
-	resp, err := h.grpcClient.StudentService().Delete(c.Request.Context(), student)
+	resp, err := h.grpcClient.UserService().Delete(c.Request.Context(), user)
 	if err != nil {
-		handleGrpcErrWithDescription(c, h.log, err, "error while deleting student")
+		handleGrpcErrWithDescription(c, h.log, err, "error while deleting user")
 		return
 	}
 	c.JSON(http.StatusOK, resp)
 }
 
-// StudentLogin godoc
-// @Router       /v1/student/login [POST]
-// @Summary      Student login
-// @Description  Student login
-// @Tags         student
+// UserLogin godoc
+// @Router       /v1/user/login [POST]
+// @Summary      User login
+// @Description  User login
+// @Tags         user
 // @Accept       json
 // @Produce      json
-// @Param        login body student_service.StudentLoginRequest true "login"
-// @Success      201  {object}  student_service.StudentLoginResponse
+// @Param        login body user_service.UserLoginRequest true "login"
+// @Success      201  {object}  user_service.UserLoginResponse
 // @Failure      400  {object}  models.Response
 // @Failure      404  {object}  models.Response
 // @Failure      500  {object}  models.Response
-func (h *handler) StudentLogin(c *gin.Context) {
-	loginReq := &student_service.StudentLoginRequest{}
+func (h *handler) UserLogin(c *gin.Context) {
+	loginReq := &user_service.UserLoginRequest{}
 
 	if err := c.ShouldBindJSON(&loginReq); err != nil {
 		handleGrpcErrWithDescription(c, h.log, err, "error while binding body")
@@ -252,7 +252,7 @@ func (h *handler) StudentLogin(c *gin.Context) {
 
 	//TODO: need validate login & password
 
-	loginResp, err := h.grpcClient.StudentService().Login(c.Request.Context(), loginReq)
+	loginResp, err := h.grpcClient.UserService().Login(c.Request.Context(), loginReq)
 	if err != nil {
 		handleGrpcErrWithDescription(c, h.log, err, "unauthorized")
 		return
@@ -263,20 +263,20 @@ func (h *handler) StudentLogin(c *gin.Context) {
 
 }
 
-// StudentRegister godoc
-// @Router       /v1/student/register [POST]
-// @Summary      Student register
-// @Description  Student register
-// @Tags         student
+// UserRegister godoc
+// @Router       /v1/user/register [POST]
+// @Summary      User register
+// @Description  User register
+// @Tags         user
 // @Accept       json
 // @Produce      json
-// @Param        register body student_service.StudentRegisterRequest true "register"
+// @Param        register body user_service.UserRegisterRequest true "register"
 // @Success      201  {object}  models.Response
 // @Failure      400  {object}  models.Response
 // @Failure      404  {object}  models.Response
 // @Failure      500  {object}  models.Response
-func (h *handler) StudentRegister(c *gin.Context) {
-	loginReq := &student_service.StudentRegisterRequest{}
+func (h *handler) UserRegister(c *gin.Context) {
+	loginReq := &user_service.UserRegisterRequest{}
 
 	if err := c.ShouldBindJSON(&loginReq); err != nil {
 		handleGrpcErrWithDescription(c, h.log, err, "error while binding body")
@@ -286,9 +286,9 @@ func (h *handler) StudentRegister(c *gin.Context) {
 
 	//TODO: need validate for (gmail.com or mail.ru) & check if email is not exists
 
-	resp, err := h.grpcClient.StudentService().Register(c.Request.Context(), loginReq)
+	resp, err := h.grpcClient.UserService().Register(c.Request.Context(), loginReq)
 	if err != nil {
-		handleGrpcErrWithDescription(c, h.log, err, "error while registr student")
+		handleGrpcErrWithDescription(c, h.log, err, "error while registr user")
 		return
 	}
 
@@ -296,20 +296,20 @@ func (h *handler) StudentRegister(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// StudentRegister godoc
-// @Router       /v1/student/register-confirm [POST]
-// @Summary      Student register
-// @Description  Student register
-// @Tags         student
+// UserRegister godoc
+// @Router       /v1/user/register-confirm [POST]
+// @Summary      User register
+// @Description  User register
+// @Tags         user
 // @Accept       json
 // @Produce      json
-// @Param        register body student_service.StudentRegisterConfRequest true "register"
-// @Success      201  {object}  student_service.StudentLoginResponse
+// @Param        register body user_service.UserRegisterConfRequest true "register"
+// @Success      201  {object}  user_service.UserLoginResponse
 // @Failure      400  {object}  models.Response
 // @Failure      404  {object}  models.Response
 // @Failure      500  {object}  models.Response
-func (h *handler) StudentRegisterConfirm(c *gin.Context) {
-	req := &student_service.StudentRegisterConfRequest{}
+func (h *handler) UserRegisterConfirm(c *gin.Context) {
+	req := &user_service.UserRegisterConfRequest{}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		handleGrpcErrWithDescription(c, h.log, err, "error while binding body")
@@ -319,7 +319,7 @@ func (h *handler) StudentRegisterConfirm(c *gin.Context) {
 
 	//TODO: need validate login & password
 
-	confResp, err := h.grpcClient.StudentService().RegisterConfirm(c.Request.Context(), req)
+	confResp, err := h.grpcClient.UserService().RegisterConfirm(c.Request.Context(), req)
 	if err != nil {
 		handleGrpcErrWithDescription(c, h.log, err, "error while confirming")
 		return
@@ -330,43 +330,43 @@ func (h *handler) StudentRegisterConfirm(c *gin.Context) {
 }
 
 // @Security ApiKeyAuth
-// @Router /v1/student/change_password [PATCH]
-// @Summary Update student
-// @Description API for Updating studentes
-// @Tags student
+// @Router /v1/user/change_password [PATCH]
+// @Summary Update user
+// @Description API for Updating useres
+// @Tags user
 // @Accept  json
 // @Produce  json
-// @Param		student body  student_service.UpdateStudent true "student"
+// @Param		user body  user_service.UpdateUser true "user"
 // @Success		200  {object}  models.ResponseError
 // @Failure		400  {object}  models.ResponseError
 // @Failure		404  {object}  models.ResponseError
 // @Failure		500  {object}  models.ResponseError
-func (h *handler) StudentChangePassword(c *gin.Context) {
+func (h *handler) UserChangePassword(c *gin.Context) {
 	authInfo, err := getAuthInfo(c)
 	if err != nil {
 		handleGrpcErrWithDescription(c, h.log, err, "Unauthorized")
 
 	}
-	if authInfo.UserRole == "superadmin" || authInfo.UserRole == "administrator" || authInfo.UserRole == "manager" || authInfo.UserRole == "student" {
+	if authInfo.UserRole == "admin" || authInfo.UserRole == "user" {
 
-		student := &student_service.StudentChangePassword{}
-		if err := c.ShouldBindJSON(&student); err != nil {
+		user := &user_service.UserChangePassword{}
+		if err := c.ShouldBindJSON(&user); err != nil {
 			handleGrpcErrWithDescription(c, h.log, err, "error while reading body")
 			return
 		}
 
-		err := validator.ValidatePassword(student.NewPassword)
+		err := validator.ValidatePassword(user.NewPassword)
 		if err != nil {
 			handleGrpcErrWithDescription(c, h.log, errors.New("wrong password"), "error while validating password")
 			return
 		}
-		resp, err := h.grpcClient.StudentService().ChangePassword(c.Request.Context(), student)
+		resp, err := h.grpcClient.UserService().ChangePassword(c.Request.Context(), user)
 		if err != nil {
-			handleGrpcErrWithDescription(c, h.log, err, "error while changing student's password")
+			handleGrpcErrWithDescription(c, h.log, err, "error while changing user's password")
 			return
 		}
 		c.JSON(http.StatusOK, resp)
 	} else {
-		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers, student and administrators can change student")
+		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers, user and admins can change user")
 	}
 }
