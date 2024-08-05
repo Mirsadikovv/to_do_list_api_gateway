@@ -11,6 +11,7 @@ import (
 )
 
 // @Security ApiKeyAuth
+// @Param   Authorization  header  string  true  "Authorization token"
 // @Router /v1/user/getall [GET]
 // @Summary Get all useres
 // @Description API for getting all useres
@@ -20,7 +21,7 @@ import (
 // @Param		search query string false "search"
 // @Param		page query int false "page"
 // @Param		limit query int false "limit"
-// @Success		200  {object}  models.ResponseError
+// @Success		200  {object}  models.ResponseSuccess
 // @Failure		400  {object}  models.ResponseError
 // @Failure		404  {object}  models.ResponseError
 // @Failure		500  {object}  models.ResponseError
@@ -58,11 +59,12 @@ func (h *handler) GetAllUser(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, resp)
 	} else {
-		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers and admins can change user")
+		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins and admins can change user")
 	}
 }
 
 // @Security ApiKeyAuth
+// @Param   Authorization  header  string  true  "Authorization token"
 // @Router /v1/user/create [POST]
 // @Summary Create user
 // @Description API for creating useres
@@ -70,7 +72,7 @@ func (h *handler) GetAllUser(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param		user body  user_service.CreateUser true "user"
-// @Success		200  {object}  models.ResponseError
+// @Success		200  {object}  models.ResponseSuccess
 // @Failure		400  {object}  models.ResponseError
 // @Failure		404  {object}  models.ResponseError
 // @Failure		500  {object}  models.ResponseError
@@ -80,7 +82,7 @@ func (h *handler) CreateUser(c *gin.Context) {
 		handleGrpcErrWithDescription(c, h.log, err, "Unauthorized")
 
 	}
-	if authInfo.UserRole == "admin" {
+	if authInfo.UserRole == "superadmin" || authInfo.UserRole == "admin" || authInfo.UserRole == "user" {
 
 		user := &user_service.CreateUser{}
 		if err := c.ShouldBindJSON(&user); err != nil {
@@ -99,7 +101,7 @@ func (h *handler) CreateUser(c *gin.Context) {
 
 		err := validator.ValidateBitrthday(user.Birthday)
 		if err != nil {
-			handleGrpcErrWithDescription(c, h.log, errors.New("wrong gmail"), "error while validating gmail")
+			handleGrpcErrWithDescription(c, h.log, errors.New("wrong birthday"), "error while validating birthday")
 			return
 		}
 
@@ -116,11 +118,12 @@ func (h *handler) CreateUser(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, resp)
 	} else {
-		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers and admins can change user")
+		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins and admins can change user")
 	}
 }
 
 // @Security ApiKeyAuth
+// @Param   Authorization  header  string  true  "Authorization token"
 // @Router /v1/user/update [PUT]
 // @Summary Update user
 // @Description API for Updating useres
@@ -128,7 +131,7 @@ func (h *handler) CreateUser(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param		user body  user_service.UpdateUser true "user"
-// @Success		200  {object}  models.ResponseError
+// @Success		200  {object}  models.ResponseSuccess
 // @Failure		400  {object}  models.ResponseError
 // @Failure		404  {object}  models.ResponseError
 // @Failure		500  {object}  models.ResponseError
@@ -138,7 +141,7 @@ func (h *handler) UpdateUser(c *gin.Context) {
 		handleGrpcErrWithDescription(c, h.log, err, "Unauthorized")
 
 	}
-	if authInfo.UserRole == "admin" || authInfo.UserRole == "user" {
+	if authInfo.UserRole == "superadmin" || authInfo.UserRole == "admin" || authInfo.UserRole == "user" {
 
 		user := &user_service.UpdateUser{}
 		if err := c.ShouldBindJSON(&user); err != nil {
@@ -167,11 +170,12 @@ func (h *handler) UpdateUser(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, resp)
 	} else {
-		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers, user and admins can change user")
+		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, user and admins can change user")
 	}
 }
 
 // @Security ApiKeyAuth
+// @Param   Authorization  header  string  true  "Authorization token"
 // @Router /v1/user/get/{id} [GET]
 // @Summary Get user
 // @Description API for getting user
@@ -179,7 +183,7 @@ func (h *handler) UpdateUser(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param 		id path string true "id"
-// @Success		200  {object}  models.ResponseError
+// @Success		200  {object}  models.ResponseSuccess
 // @Failure		400  {object}  models.ResponseError
 // @Failure		404  {object}  models.ResponseError
 // @Failure		500  {object}  models.ResponseError
@@ -189,7 +193,7 @@ func (h *handler) GetUserById(c *gin.Context) {
 		handleGrpcErrWithDescription(c, h.log, err, "Unauthorized")
 
 	}
-	if authInfo.UserRole == "admin" || authInfo.UserRole == "user" {
+	if authInfo.UserRole == "superadmin" || authInfo.UserRole == "admin" || authInfo.UserRole == "user" {
 
 		id := c.Param("id")
 		user := &user_service.UserPrimaryKey{Id: id}
@@ -201,11 +205,12 @@ func (h *handler) GetUserById(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, resp)
 	} else {
-		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, managers, user and admins can change user")
+		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, user and admins can change user")
 	}
 }
 
 // @Security ApiKeyAuth
+// @Param   Authorization  header  string  true  "Authorization token"
 // @Router /v1/user/delete/{id} [DELETE]
 // @Summary Delete user
 // @Description API for deleting user
@@ -213,20 +218,30 @@ func (h *handler) GetUserById(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param 		id path string true "id"
-// @Success		200  {object}  models.ResponseError
+// @Success		200  {object}  models.ResponseSuccess
 // @Failure		400  {object}  models.ResponseError
 // @Failure		404  {object}  models.ResponseError
 // @Failure		500  {object}  models.ResponseError
 func (h *handler) DeleteUser(c *gin.Context) {
-	id := c.Param("id")
-	user := &user_service.UserPrimaryKey{Id: id}
-
-	resp, err := h.grpcClient.UserService().Delete(c.Request.Context(), user)
+	authInfo, err := getAuthInfo(c)
 	if err != nil {
-		handleGrpcErrWithDescription(c, h.log, err, "error while deleting user")
-		return
+		handleGrpcErrWithDescription(c, h.log, err, "Unauthorized")
+
 	}
-	c.JSON(http.StatusOK, resp)
+	if authInfo.UserRole == "superadmin" || authInfo.UserRole == "admin" || authInfo.UserRole == "user" {
+
+		id := c.Param("id")
+		user := &user_service.UserPrimaryKey{Id: id}
+
+		resp, err := h.grpcClient.UserService().Delete(c.Request.Context(), user)
+		if err != nil {
+			handleGrpcErrWithDescription(c, h.log, err, "error while deleting user")
+			return
+		}
+		c.JSON(http.StatusOK, resp)
+	} else {
+		handleGrpcErrWithDescription(c, h.log, errors.New("Forbidden"), "Only superadmins, user and admins can change user")
+	}
 }
 
 // UserLogin godoc
@@ -237,10 +252,10 @@ func (h *handler) DeleteUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        login body user_service.UserLoginRequest true "login"
-// @Success      201  {object}  user_service.UserLoginResponse
-// @Failure      400  {object}  models.Response
-// @Failure      404  {object}  models.Response
-// @Failure      500  {object}  models.Response
+// @Success		 200  {object}  models.ResponseSuccess
+// @Failure		 400  {object}  models.ResponseError
+// @Failure		 404  {object}  models.ResponseError
+// @Failure		 500  {object}  models.ResponseError
 func (h *handler) UserLogin(c *gin.Context) {
 	loginReq := &user_service.UserLoginRequest{}
 
@@ -271,10 +286,10 @@ func (h *handler) UserLogin(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        register body user_service.UserRegisterRequest true "register"
-// @Success      201  {object}  models.Response
-// @Failure      400  {object}  models.Response
-// @Failure      404  {object}  models.Response
-// @Failure      500  {object}  models.Response
+// @Success	   	 200  {object}  models.ResponseSuccess
+// @Failure		 400  {object}  models.ResponseError
+// @Failure	     404  {object}  models.ResponseError
+// @Failure		 500  {object}  models.ResponseError
 func (h *handler) UserRegister(c *gin.Context) {
 	loginReq := &user_service.UserRegisterRequest{}
 
@@ -283,8 +298,6 @@ func (h *handler) UserRegister(c *gin.Context) {
 		return
 	}
 	fmt.Println("loginReq: ", loginReq)
-
-	//TODO: need validate for (gmail.com or mail.ru) & check if email is not exists
 
 	resp, err := h.grpcClient.UserService().Register(c.Request.Context(), loginReq)
 	if err != nil {
@@ -304,10 +317,10 @@ func (h *handler) UserRegister(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        register body user_service.UserRegisterConfRequest true "register"
-// @Success      201  {object}  user_service.UserLoginResponse
-// @Failure      400  {object}  models.Response
-// @Failure      404  {object}  models.Response
-// @Failure      500  {object}  models.Response
+// @Success		 200  {object}  models.ResponseSuccess
+// @Failure		 400  {object}  models.ResponseError
+// @Failure		 404  {object}  models.ResponseError
+// @Failure		 500  {object}  models.ResponseError
 func (h *handler) UserRegisterConfirm(c *gin.Context) {
 	req := &user_service.UserRegisterConfRequest{}
 
@@ -317,8 +330,21 @@ func (h *handler) UserRegisterConfirm(c *gin.Context) {
 	}
 	fmt.Println("req: ", req)
 
-	//TODO: need validate login & password
+	if !validator.ValidateGmail(req.User[0].Email) {
+		handleGrpcErrWithDescription(c, h.log, errors.New("wrong gmail"), "error while validating gmail")
+		return
+	}
 
+	if !validator.ValidatePhone(req.User[0].Phone) {
+		handleGrpcErrWithDescription(c, h.log, errors.New("wrong phone"), "error while validating phone")
+		return
+	}
+
+	err := validator.ValidatePassword(req.User[0].UserPassword)
+	if err != nil {
+		handleGrpcErrWithDescription(c, h.log, errors.New("wrong password"), "error while validating password")
+		return
+	}
 	confResp, err := h.grpcClient.UserService().RegisterConfirm(c.Request.Context(), req)
 	if err != nil {
 		handleGrpcErrWithDescription(c, h.log, err, "error while confirming")
@@ -330,14 +356,15 @@ func (h *handler) UserRegisterConfirm(c *gin.Context) {
 }
 
 // @Security ApiKeyAuth
+// @Param   Authorization  header  string  true  "Authorization token"
 // @Router /v1/user/change_password [PATCH]
 // @Summary Update user
 // @Description API for Updating useres
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Param		user body  user_service.UpdateUser true "user"
-// @Success		200  {object}  models.ResponseError
+// @Param		user body  user_service.UserChangePassword true "user"
+// @Success		200  {object}  models.ResponseSuccess
 // @Failure		400  {object}  models.ResponseError
 // @Failure		404  {object}  models.ResponseError
 // @Failure		500  {object}  models.ResponseError
@@ -347,7 +374,7 @@ func (h *handler) UserChangePassword(c *gin.Context) {
 		handleGrpcErrWithDescription(c, h.log, err, "Unauthorized")
 
 	}
-	if authInfo.UserRole == "admin" || authInfo.UserRole == "user" {
+	if authInfo.UserRole == "superadmin" || authInfo.UserRole == "admin" || authInfo.UserRole == "user" {
 
 		user := &user_service.UserChangePassword{}
 		if err := c.ShouldBindJSON(&user); err != nil {

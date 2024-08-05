@@ -50,7 +50,7 @@ func CheckDeadline(timestamp string) (float64, error) {
 }
 
 func ValidateBitrthday(birthday string) error {
-	layout := "2006-01-02"
+	layout := "02-01-2006"
 
 	date, err := time.Parse(layout, birthday)
 	if err != nil {

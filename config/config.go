@@ -17,10 +17,10 @@ type Config struct {
 	RedisPort     int
 	RedisPassword string
 
-	UserServiceHost     string
-	UserServicePort     string
-	ScheduleServiceHost string
-	ScheduleServicePort string
+	UserServiceHost string
+	UserServicePort string
+	TaskServiceHost string
+	TaskServicePort string
 
 	LogLevel string
 	HTTPPort string
@@ -42,8 +42,8 @@ func Load() Config {
 	c.RedisPort = cast.ToInt(getOrReturnDefault("REDIS_PORT", 6379))
 	c.RedisPassword = cast.ToString(getOrReturnDefault("REDIS_PASSWORD", "3EEdwhDOfx"))
 
-	c.ScheduleServiceHost = cast.ToString(getOrReturnDefault("SCHEDULE_SERVICE_HOST", "localhost"))
-	c.ScheduleServicePort = cast.ToString(getOrReturnDefault("SCHEDULE_GRPC_PORT", "8082"))
+	c.TaskServiceHost = cast.ToString(getOrReturnDefault("TASK_SERVICE_HOST", "localhost"))
+	c.TaskServicePort = cast.ToString(getOrReturnDefault("TASK_SERVICE_PORT", "8082"))
 
 	c.UserServiceHost = cast.ToString(getOrReturnDefault("USER_SERVICE_HOST", "localhost"))
 	c.UserServicePort = cast.ToString(getOrReturnDefault("USER_SERVICE_PORT", "8081"))

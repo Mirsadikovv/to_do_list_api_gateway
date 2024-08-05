@@ -6,9 +6,12 @@ import (
 	"api_gateway/config"
 	"api_gateway/pkg/grpc_client"
 	"api_gateway/pkg/logger"
+	"fmt"
+	"strings"
 
 	"net/http"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -77,6 +80,14 @@ func New(cnf Config) *gin.Engine {
 	r.POST("/v1/user/register", handler.UserRegister)
 	r.POST("/v1/user/register-confirm", handler.UserRegisterConfirm)
 
+	r.GET("/v1/task/getall", handler.GetAllTask)
+	r.GET("/v1/task/get/:id", handler.GetTaskById)
+	r.GET("/v1/task/get_by_task_id/:id", handler.GetByExternalId)
+	r.POST("/v1/task/create", handler.CreateTask)
+	r.PUT("/v1/task/update", handler.UpdateTask)
+	r.DELETE("/v1/task/delete/:id", handler.DeleteTask)
+	r.PATCH("/v1/task/change_status/", handler.TaskChangeStatus)
+
 	url := ginSwagger.URL("swagger/doc.json")
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 
@@ -91,3 +102,37 @@ func New(cnf Config) *gin.Engine {
 // 	}
 // 	c.Next()
 // }
+
+func JWTAuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is missing"})
+			c.Abort()
+			return
+		}
+
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header format must be Bearer {token}"})
+			c.Abort()
+			return
+		}
+
+		tokenString := parts[1]
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+			return []byte("your_secret_key"), nil
+		})
+
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}

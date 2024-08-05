@@ -1,16 +1,18 @@
 definitions:
+  admin_service.AdminChangePassword:
+    properties:
+      NewPassword:
+        type: string
+      OldPassword:
+        type: string
+      UserLogin:
+        type: string
+    type: object
   admin_service.AdminLoginRequest:
     properties:
       user_login:
         type: string
       user_password:
-        type: string
-    type: object
-  admin_service.AdminLoginResponse:
-    properties:
-      access_token:
-        type: string
-      refresh_token:
         type: string
     type: object
   admin_service.AdminRegisterConfRequest:
@@ -59,13 +61,47 @@ definitions:
       phone:
         type: string
     type: object
-  models.Response:
-    properties:
-      id: {}
-    type: object
   models.ResponseError:
     properties:
       error: {}
+    type: object
+  models.ResponseSuccess:
+    properties:
+      data: {}
+      metadata: {}
+    type: object
+  task_service.CreateTask:
+    properties:
+      deadline:
+        type: string
+      task_description:
+        type: string
+      task_status:
+        type: string
+      title:
+        type: string
+      user_id:
+        type: string
+    type: object
+  task_service.TaskChangeStatus:
+    properties:
+      new_status:
+        type: string
+      task_id:
+        type: string
+    type: object
+  task_service.UpdateTask:
+    properties:
+      deadline:
+        type: string
+      id:
+        type: string
+      task_description:
+        type: number
+      title:
+        type: string
+      user_id:
+        type: string
     type: object
   user_service.CreateUser:
     properties:
@@ -73,19 +109,11 @@ definitions:
         type: string
       email:
         type: string
-      finished_at:
-        type: string
       fullname:
         type: string
       gender:
         type: string
-      group_id:
-        type: string
-      paid_sum:
-        type: number
       phone:
-        type: string
-      started_at:
         type: string
       user_password:
         type: string
@@ -96,21 +124,22 @@ definitions:
         type: string
       email:
         type: string
-      finished_at:
-        type: string
       fullname:
         type: string
       gender:
         type: string
-      group_id:
-        type: string
       id:
         type: string
-      paid_sum:
-        type: number
       phone:
         type: string
-      started_at:
+    type: object
+  user_service.UserChangePassword:
+    properties:
+      NewPassword:
+        type: string
+      OldPassword:
+        type: string
+      UserLogin:
         type: string
     type: object
   user_service.UserLoginRequest:
@@ -118,13 +147,6 @@ definitions:
       user_login:
         type: string
       user_password:
-        type: string
-    type: object
-  user_service.UserLoginResponse:
-    properties:
-      access_token:
-        type: string
-      refresh_token:
         type: string
     type: object
   user_service.UserRegisterConfRequest:
@@ -155,19 +177,24 @@ paths:
       - application/json
       description: API for Updating admines
       parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: admin
         in: body
         name: admin
         required: true
         schema:
-          $ref: '#/definitions/admin_service.UpdateAdmin'
+          $ref: '#/definitions/admin_service.AdminChangePassword'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseError'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
@@ -191,6 +218,11 @@ paths:
       - application/json
       description: API for creating admines
       parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: admin
         in: body
         name: admin
@@ -203,7 +235,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseError'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
@@ -227,6 +259,11 @@ paths:
       - application/json
       description: API for deleting admin
       parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: id
         in: path
         name: id
@@ -238,7 +275,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseError'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
@@ -262,6 +299,11 @@ paths:
       - application/json
       description: API for getting admin
       parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: id
         in: path
         name: id
@@ -273,7 +315,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseError'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
@@ -297,6 +339,11 @@ paths:
       - application/json
       description: API for getting all admines
       parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: search
         in: query
         name: search
@@ -315,7 +362,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseError'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
@@ -348,22 +395,22 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/admin_service.AdminLoginResponse'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
       summary: Admin login
       tags:
       - admin
@@ -382,22 +429,22 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
       summary: Admin register
       tags:
       - admin
@@ -416,22 +463,22 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/admin_service.AdminLoginResponse'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
       summary: Admin register
       tags:
       - admin
@@ -441,6 +488,11 @@ paths:
       - application/json
       description: API for Updating admins
       parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: admin
         in: body
         name: admin
@@ -453,7 +505,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseError'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
@@ -471,25 +523,325 @@ paths:
       summary: Update admin
       tags:
       - admin
-  /v1/user/change_password:
+  /v1/task/change_status:
     patch:
       consumes:
       - application/json
-      description: API for Updating useres
+      description: API for Updating taskes
       parameters:
-      - description: user
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: task
         in: body
-        name: user
+        name: task
         required: true
         schema:
-          $ref: '#/definitions/user_service.UpdateUser'
+          $ref: '#/definitions/task_service.TaskChangeStatus'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "400":
+          description: Bad Request
+          schema:
             $ref: '#/definitions/models.ResponseError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+      security:
+      - ApiKeyAuth: []
+      summary: Update task
+      tags:
+      - task
+  /v1/task/create:
+    post:
+      consumes:
+      - application/json
+      description: API for creating taskes
+      parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: task
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/task_service.CreateTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+      security:
+      - ApiKeyAuth: []
+      summary: Create task
+      tags:
+      - task
+  /v1/task/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: API for deleting task
+      parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete task
+      tags:
+      - task
+  /v1/task/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: API for getting task
+      parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+      security:
+      - ApiKeyAuth: []
+      summary: Get task
+      tags:
+      - task
+  /v1/task/get_by_task_id/{id}:
+    get:
+      consumes:
+      - application/json
+      description: API for getting task
+      parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+      security:
+      - ApiKeyAuth: []
+      summary: Get task
+      tags:
+      - task
+  /v1/task/getall:
+    get:
+      consumes:
+      - application/json
+      description: API for getting all taskes
+      parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: user_id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: search
+        in: query
+        name: search
+        type: string
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+      security:
+      - ApiKeyAuth: []
+      summary: Get all taskes
+      tags:
+      - task
+  /v1/task/update:
+    put:
+      consumes:
+      - application/json
+      description: API for Updating tasks
+      parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: task
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/task_service.UpdateTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseError'
+      security:
+      - ApiKeyAuth: []
+      summary: Update task
+      tags:
+      - task
+  /v1/user/change_password:
+    patch:
+      consumes:
+      - application/json
+      description: API for Updating useres
+      parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/user_service.UserChangePassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
@@ -513,6 +865,11 @@ paths:
       - application/json
       description: API for creating useres
       parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: user
         in: body
         name: user
@@ -525,7 +882,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseError'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
@@ -549,6 +906,11 @@ paths:
       - application/json
       description: API for deleting user
       parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: id
         in: path
         name: id
@@ -560,7 +922,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseError'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
@@ -584,6 +946,11 @@ paths:
       - application/json
       description: API for getting user
       parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: id
         in: path
         name: id
@@ -595,7 +962,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseError'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
@@ -619,6 +986,11 @@ paths:
       - application/json
       description: API for getting all useres
       parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: search
         in: query
         name: search
@@ -637,7 +1009,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseError'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
@@ -670,22 +1042,22 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/user_service.UserLoginResponse'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
       summary: User login
       tags:
       - user
@@ -704,22 +1076,22 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
       summary: User register
       tags:
       - user
@@ -738,22 +1110,22 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/user_service.UserLoginResponse'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResponseError'
       summary: User register
       tags:
       - user
@@ -763,6 +1135,11 @@ paths:
       - application/json
       description: API for Updating useres
       parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: user
         in: body
         name: user
@@ -775,7 +1152,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ResponseError'
+            $ref: '#/definitions/models.ResponseSuccess'
         "400":
           description: Bad Request
           schema:
